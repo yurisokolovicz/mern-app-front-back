@@ -12,6 +12,15 @@ const app = express();
 // It will parse any incoming request body and extract any JSON data there, convert to regular javascript data structures like objects and arrays and then call next automatically so we reach the next midleware in line and then also add this JSON data there.
 app.use(bodyParser.json());
 
+// Handling CORS errors
+app.use((req, res, next) => {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PATCH, DELETE');
+
+    next();
+});
+
 app.use('/api/places', placesRoutes); // => /api/places/...
 app.use('/api/users', usersRoutes);
 
