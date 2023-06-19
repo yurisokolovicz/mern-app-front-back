@@ -7,14 +7,14 @@ import ErrorModal from '../../shared/components/UIElements/ErrorModal';
 import LoadingSpinner from '../../shared/components/UIElements/LoadingSpinner';
 import { VALIDATOR_EMAIL, VALIDATOR_MINLENGTH, VALIDATOR_REQUIRE } from '../../shared/util/validators';
 import { useForm } from '../../shared/hooks/form-hook'; // This is a custom hook that we created
+import { useHttpClient } from '../../shared/hooks/http-hook';
 import { AuthContext } from '../../shared/context/auth-context';
 import './Auth.css';
 
 const Auth = () => {
     const auth = useContext(AuthContext);
     const [isLoginMode, setIsLoginMode] = useState(true);
-    const [isLoading, setIsLoading] = useState(false);
-    const [error, setError] = useState();
+    const { isLoading, error, sendRequest, clearError } = useHttpClient();
     // we extract the formState, inputHandler and setFormData from the custom hook useForm before calling it.
     const [formState, inputHandler, setFormData] = useForm(
         {
@@ -56,64 +56,50 @@ const Auth = () => {
 
     const authSubmitHandler = async event => {
         event.preventDefault();
-        setIsLoading(true);
 
         if (isLoginMode) {
             try {
-                const response = await fetch('http://localhost:5000/api/users/login', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
+                await sendRequest(
+                    'http://localhost:5000/api/users/login',
+                    'POST',
+                    JSON.stringify({
+                        // body - 3rd argument in the http-hook custom hook
                         email: formState.inputs.email.value,
                         password: formState.inputs.password.value
-                    })
-                });
+                    }),
+                    {
+                        // headers - 4th argument in the http-hook custom hook
+                        'Content-Type': 'application/json'
+                    }
+                );
 
-                const responseData = await response.json();
-                if (!response.ok) {
-                    throw new Error(responseData.message);
-                }
-                setIsLoading(false);
                 auth.login();
             } catch (err) {
-                setIsLoading(false);
-                setError(err.message || 'Something went wrong, please try again');
+                console.log(err);
             }
         } else {
             try {
-                const response = await fetch('http://localhost:5000/api/users/signup', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
+                await sendRequest(
+                    'http://localhost:5000/api/users/signup',
+                    'POST',
+                    JSON.stringify({
                         name: formState.inputs.name.value,
                         email: formState.inputs.email.value,
                         password: formState.inputs.password.value
-                    })
-                });
-
-                const responseData = await response.json();
-                // if the response is not ok we have a 400 or 500 status code. It is ok only if we have 200 status
-                if (!response.ok) {
-                    throw new Error(responseData.message);
-                    // if it happen the code go to the catch block. No login happen (the try execution stop)
-                }
-                setIsLoading(false);
+                    }),
+                    {
+                        'Content-Type': 'application/json'
+                    }
+                );
                 // Login only if we do not have an error
                 auth.login();
             } catch (err) {
-                setIsLoading(false);
-                // if no error message display 'Something ...'
-                setError(err.message || 'Something went wrong, please try again');
+                console.log(err);
             }
         }
     };
-
     const errorHandler = () => {
-        setError(null);
+        clearError();
     };
 
     return (
