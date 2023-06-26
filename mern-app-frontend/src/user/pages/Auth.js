@@ -9,6 +9,7 @@ import { VALIDATOR_EMAIL, VALIDATOR_MINLENGTH, VALIDATOR_REQUIRE } from '../../s
 import { useForm } from '../../shared/hooks/form-hook'; // This is a custom hook that we created
 import { useHttpClient } from '../../shared/hooks/http-hook';
 import { AuthContext } from '../../shared/context/auth-context';
+import ImageUpload from '../../shared/components/FormElements/ImageUpload';
 import './Auth.css';
 
 const Auth = () => {
@@ -121,6 +122,7 @@ const Auth = () => {
                             onInput={inputHandler}
                         />
                     )}
+                    {!isLoginMode && <ImageUpload center id="image" />}
                     <Input
                         element="input"
                         id="email"
