@@ -4,10 +4,14 @@ import Card from '../../shared/UIElements/Card';
 import Button from '../../shared/components/FormElements/Button';
 import Modal from '../../shared/components/UIElements/Modal';
 import Map from '../../shared/components/UIElements/Map';
+import LoadingSpinner from '../../shared/components/UIElements/LoadingSpinner';
+import ErrorModal from '../../shared/components/UIElements/ErrorModal';
 import { AuthContext } from '../../shared/context/auth-context';
+import { useHttpClient } from '../../shared/hooks/http-hook';
 import './PlaceItem.css';
 
 const PlaceItem = placeList => {
+    const { isLoading, error, sendRequest, clearError } = useHttpClient();
     const auth = useContext(AuthContext);
     const [showMap, setShowMap] = useState(false); // This is a state that will be used to show the map when the user clicks on the VIEW ON MAP button. It is false by default because we dont want to show the modal when the user acess the page.
     const [showConfirmModal, setShowConfirmModal] = useState(false);
@@ -24,13 +28,17 @@ const PlaceItem = placeList => {
         setShowConfirmModal(false);
     };
 
-    const confirmDeleteHandler = () => {
+    const confirmDeleteHandler = async () => {
         setShowConfirmModal(false); // to close the modal
-        console.log('DELETING...');
+        try {
+            await sendRequest(`http://localhost:5000/api,places/${placeList.id}`, 'DELETE');
+            placeList.onDelete(placeList.id);
+        } catch (err) {}
     };
 
     return (
         <React.Fragment>
+            <ErrorModal error={error} onClear={clearError} />
             <Modal
                 show={showMap}
                 onCancel={closeMapHandler}
@@ -64,6 +72,7 @@ const PlaceItem = placeList => {
             {/* onCancel come from the Modal component, it is a prop that we can use to close the modal when the user clicks on the backdrop. */}
             <li className="place-item">
                 <Card className="place-item__content">
+                    {isLoading && <LoadingSpinner asOverlay />}
                     <div className="place-item__image">
                         <img src={placeList.image} alt={placeList.title} />
                     </div>
