@@ -1,7 +1,6 @@
 const express = require('express'); // Importing express
 // using express validator
 const { check } = require('express-validator');
-const { getPlaceById } = require('../controllers/places-controller');
 const placesControllers = require('../controllers/places-controller'); // Importing controllers containing the midleware functions
 const router = express.Router();
 
