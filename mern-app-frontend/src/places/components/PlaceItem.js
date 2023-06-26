@@ -31,7 +31,7 @@ const PlaceItem = placeList => {
     const confirmDeleteHandler = async () => {
         setShowConfirmModal(false); // to close the modal
         try {
-            await sendRequest(`http://localhost:5000/api,places/${placeList.id}`, 'DELETE');
+            await sendRequest(`http://localhost:5000/api/places/${placeList.id}`, 'DELETE');
             placeList.onDelete(placeList.id);
         } catch (err) {}
     };
