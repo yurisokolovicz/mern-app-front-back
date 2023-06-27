@@ -1,4 +1,5 @@
 const fs = require('fs'); // file system - allow us to delete files
+const path = require('path');
 
 const express = require('express');
 const bodyParser = require('body-parser');
@@ -13,6 +14,10 @@ const app = express();
 
 // It will parse any incoming request body and extract any JSON data there, convert to regular javascript data structures like objects and arrays and then call next automatically so we reach the next midleware in line and then also add this JSON data there.
 app.use(bodyParser.json());
+
+// middleware to give access to images
+// path point to the folder to serve files (uploads and images) without extra checks - to use in express.static
+app.use('/uploads/images', express.static(path.join('uploads', 'images')));
 
 // Handling CORS errors
 app.use((req, res, next) => {
