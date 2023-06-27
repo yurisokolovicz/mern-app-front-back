@@ -74,7 +74,7 @@ const PlaceItem = placeList => {
                 <Card className="place-item__content">
                     {isLoading && <LoadingSpinner asOverlay />}
                     <div className="place-item__image">
-                        <img src={placeList.image} alt={placeList.title} />
+                        <img src={`http://localhost:5000/${placeList.image}`} alt={placeList.title} />
                     </div>
                     <div className="place-item__info">
                         <h2>{placeList.title}</h2>
