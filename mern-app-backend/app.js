@@ -1,3 +1,5 @@
+const fs = require('fs'); // file system - allow us to delete files
+
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
@@ -31,8 +33,13 @@ app.use((req, res, next) => {
 
 // Error handling middleware function - it will be executed on request that have an error.
 app.use((error, req, res, next) => {
-    // if the response has already been sent
+    if (req.file) {
+        fs.unlink(req.file.path, err => {
+            console.log(err);
+        });
+    }
     if (res.headerSent) {
+        // if the response has already been sent
         return next(error); // we forward the error to the next middleware
     }
     res.status(error.code || 500); // Search code property in the error object. If it doesn't exist, we set the status code to 500. 500 indicates that there is a server error.
