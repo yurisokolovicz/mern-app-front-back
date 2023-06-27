@@ -1,4 +1,5 @@
 const { validationResult } = require('express-validator');
+const bcrypt = require('bcryptjs'); // library to encrypt (hash) the passwords
 
 const HttpError = require('../models/http-error');
 const User = require('../models/user');
@@ -40,12 +41,20 @@ const signup = async (req, res, next) => {
         return next(error);
     }
 
-    // Later in the authentication we will encrypt the password, the way we did here it is not secure (store not encrypted password)
+    // Encrypt the password - hashing with bcryptjs
+    let hashedPassword;
+    try {
+        hashedPassword = await bcrypt.hash(password, 12);
+    } catch (err) {
+        const error = new HttpError('Could not create user, please try again', 500);
+        return next(error);
+    }
+
     const createdUser = new User({
         name,
         email,
         image: req.file.path,
-        password,
+        password: hashedPassword,
         places: []
     });
     // Saving the user
