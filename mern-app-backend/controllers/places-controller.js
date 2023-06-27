@@ -1,4 +1,6 @@
 // In the Controller we have only the Midleware function, we don`t need to import Express!
+const fs = require('fs'); // fs = file system
+
 const { validationResult } = require('express-validator');
 const mongoose = require('mongoose');
 
@@ -159,6 +161,8 @@ const deletePlace = async (req, res, next) => {
         return next(error);
     }
     // deleting from db
+    const imagePath = place.image;
+
     try {
         const sess = await mongoose.startSession();
         sess.startTransaction();
@@ -172,6 +176,10 @@ const deletePlace = async (req, res, next) => {
         const error = new HttpError('Something went wrong, could not delete place', 500);
         return next(error);
     }
+    // deleting the image from the back-end (not from db because images are NOT stored in db)
+    fs.unlink(imagePath, err => {
+        console.log(err);
+    });
 
     res.status(200).json({ message: 'Deleted place' });
 };
