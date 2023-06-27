@@ -81,7 +81,7 @@ const Auth = () => {
                     }
                 );
 
-                auth.login(responseData.user.id);
+                auth.login(responseData.userId, responseData.token);
             } catch (err) {
                 console.log(err);
             }
@@ -95,7 +95,7 @@ const Auth = () => {
 
                 const responseData = await sendRequest('http://localhost:5000/api/users/signup', 'POST', formData);
                 // Login only if we do not have an error
-                auth.login(responseData.user.id);
+                auth.login(responseData.userId, responseData.token);
             } catch (err) {
                 console.log(err);
             }

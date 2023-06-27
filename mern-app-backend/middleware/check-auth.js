@@ -3,10 +3,16 @@ const jwt = require('jsonwebtoken');
 const HttpError = require('../models/http-error');
 
 module.exports = (req, res, next) => {
+    if (req.method === 'OPTIONS') {
+        // required adjustments to endure our OPTION request is not blocked
+        return next();
+    }
     try {
-        const token = req.headers.authorization.split(' ')[1]; // Authorization: 'Bear TOKEN' - accessing second elemento (TOKEN).
+        const token = req.headers.authorization.split(' ')[1]; // Authorization: 'Bearer TOKEN' - accessing second elemento (TOKEN).
         // If the split fails - if we dont have authorization headers.
-        throw new Error('Authentication failed!');
+        if (!token) {
+            throw new Error('Authentication failed!');
+        }
         // Validating the token
         const decodedToken = jwt.verify(token, 'supersecret_dont_share');
         // Adding data to the request
