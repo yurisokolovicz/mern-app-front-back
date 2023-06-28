@@ -128,6 +128,11 @@ const updatePlace = async (req, res, next) => {
         const error = new HttpError('Something went wrong, could not update place', 500);
         return next(error);
     }
+    // More secure, to avoid another person that is not the place creator modify the content
+    if (place.creator.toString() !== req.userData.userId) {
+        const error = new HttpError('You are not allowed to edit this place', 401); // 401 - authorization error
+        return next(error);
+    }
 
     place.title = title;
     place.description = description;
