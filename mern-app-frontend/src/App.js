@@ -16,6 +16,8 @@ const App = () => {
     // useCallback will make sure that this function is not recreated when the component re-renders. To avoid infinite loop.
     const login = useCallback((uid, token) => {
         setToken(token);
+        // using JSON stringify to convert object into string in the localstorage.
+        localStorage.setItem('userData', JSON.stringify({ userId: uid, token: token }));
         setUserId(uid);
     }, []);
 
