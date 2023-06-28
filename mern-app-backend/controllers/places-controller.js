@@ -60,7 +60,7 @@ const createPlace = async (req, res, next) => {
         return next(new HttpError('Invalid inputs passed, please check your data', 422));
     }
     // We use object destructuring to get different properties out of the request body and store it in constant which are then available in function.
-    const { title, description, address, creator } = req.body;
+    const { title, description, address } = req.body;
 
     let coordinates;
     try {
@@ -76,12 +76,12 @@ const createPlace = async (req, res, next) => {
         address,
         location: coordinates,
         image: req.file.path,
-        creator
+        creator: req.userData.userId // SECURITY REASON, for the backend use the userId from local storage.
     });
     // Check if exist user
     let user;
     try {
-        user = await User.findById(creator);
+        user = await User.findById(req.userData.userId);
     } catch (err) {
         const error = new HttpError('Creating place failed, please try again', 500);
         return next(error);
