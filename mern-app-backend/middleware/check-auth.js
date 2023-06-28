@@ -20,7 +20,7 @@ module.exports = (req, res, next) => {
         next();
     } catch (err) {
         // If succed but we dont have a token
-        const error = new HttpError('Authentication failed', 401);
+        const error = new HttpError('Authentication failed', 403); // 403 - Forbidden
         return next(error);
     }
 };
