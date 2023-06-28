@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Redirect, Switch } from 'react-router-dom';
 
 import Users from './user/pages/Users';
@@ -16,6 +16,7 @@ const App = () => {
     // useCallback will make sure that this function is not recreated when the component re-renders. To avoid infinite loop.
     const login = useCallback((uid, token) => {
         setToken(token);
+        setUserId(uid);
         // using JSON stringify to convert object into string in the localstorage.
         localStorage.setItem('userData', JSON.stringify({ userId: uid, token: token }));
         setUserId(uid);
@@ -24,7 +25,18 @@ const App = () => {
     const logout = useCallback(() => {
         setToken(null);
         setUserId(null);
+        localStorage.removeItem('userData');
     }, []);
+
+    // In useEffect if dependencies is an empty array, the function will only run once. When the component mounts (render for the 1st time)
+    useEffect(() => {
+        // parse method convert JSON strings back to regular javascript data structures like objects (userId and token)
+        const storeData = JSON.parse(localStorage.getItem('userData'));
+        // If we have storeData and if we have token in the storeData we want to login and forward userId and token.
+        if (storeData && storeData.token) {
+            login(storeData.userId, storeData.token);
+        }
+    }, [login]);
 
     let routes;
 
