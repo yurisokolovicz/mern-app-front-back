@@ -1,8 +1,8 @@
 const axios = require('axios');
 
 const HttpError = require('../models/http-error');
-// LocationIQ API (https://locationiq.com/docs)
-const API_KEY = 'pk.048df481e34cdae1a211af0e0f95594b';
+
+const API_KEY = process.env.LocationIQ_API_KEY;
 
 async function getCoordsForAddress(address) {
     const response = await axios.get(

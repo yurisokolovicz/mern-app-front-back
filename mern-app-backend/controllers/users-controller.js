@@ -69,7 +69,7 @@ const signup = async (req, res, next) => {
     // Generating token im the backend
     let token;
     try {
-        token = jwt.sign({ userId: createdUser.id, email: createdUser.email }, 'supersecret_dont_share', { expiresIn: '1h' });
+        token = jwt.sign({ userId: createdUser.id, email: createdUser.email }, process.env.JWT_KEY, { expiresIn: '1h' });
     } catch (err) {
         const error = new HttpError('Signing up failed, please try again', 500);
         return next(error);
@@ -111,7 +111,7 @@ const login = async (req, res, next) => {
     let token;
     try {
         //TODO: Check if its jwt.login or jwt.sign
-        token = jwt.sign({ userId: existingUser.id, email: existingUser.email }, 'supersecret_dont_share', { expiresIn: '1h' });
+        token = jwt.sign({ userId: existingUser.id, email: existingUser.email }, process.env.JWT_KEY, { expiresIn: '1h' });
     } catch (err) {
         const error = new HttpError('Logging up failed, please try again', 500);
         return next(error);

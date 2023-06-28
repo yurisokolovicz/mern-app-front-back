@@ -1,0 +1,9 @@
+{
+    "env": {
+        "DB_USER": "yuri",
+        "DB_PASSWORD": "qLLJkQ3EMDNuN4T2",
+        "DB_NAME": "mern",
+        "LocationIQ_API_KEY": "pk.048df481e34cdae1a211af0e0f95594b",
+        "JWT_KEY": "supersecret_dont_share"
+    }
+}
