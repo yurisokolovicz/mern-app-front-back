@@ -9,26 +9,40 @@ import UpdatePlace from './places/pages/UpdatePlace';
 import Auth from './user/pages/Auth';
 import { AuthContext } from './shared/context/auth-context';
 
+let logoutTimer;
+
 const App = () => {
     const [token, setToken] = useState(false);
     const [userId, setUserId] = useState(false);
+    const [tokenExpirationDate, setTokenExpirationDate] = useState();
 
     // useCallback will make sure that this function is not recreated when the component re-renders. To avoid infinite loop.
     const login = useCallback((uid, token, expirationDate) => {
         setToken(token);
         setUserId(uid);
         // creating a time 1h in the future to set token expiration in localStorage
-        const tokenExpirationDate = expirationDate || new Date(new Date().getTime() + 1000 * 60 * 60); // 1000 milisecons, *60 * 60 = 1h
+        const tokenExpDate = expirationDate || new Date(new Date().getTime() + 1000 * 60 * 60); // 1000 milisecons, *60 * 60 = 1h
+        setTokenExpirationDate(tokenExpDate);
         // using JSON stringify to convert object into string in the localstorage.
-        localStorage.setItem('userData', JSON.stringify({ userId: uid, token: token, expiration: tokenExpirationDate.toISOString() }));
+        localStorage.setItem('userData', JSON.stringify({ userId: uid, token: token, expiration: tokenExpDate.toISOString() }));
         setUserId(uid);
     }, []);
 
     const logout = useCallback(() => {
         setToken(null);
+        setTokenExpirationDate(null);
         setUserId(null);
         localStorage.removeItem('userData');
     }, []);
+
+    useEffect(() => {
+        if (token && tokenExpirationDate) {
+            const remainingTime = tokenExpirationDate.getTime() - new Date().getTime();
+            logoutTimer = setTimeout(logout, remainingTime);
+        } else {
+            clearTimeout(logoutTimer);
+        }
+    }, [token, logout, tokenExpirationDate]); // logout is usingCallback to avoid infinite loop
 
     // In useEffect if dependencies is an empty array, the function will only run once. When the component mounts (render for the 1st time)
     useEffect(() => {
