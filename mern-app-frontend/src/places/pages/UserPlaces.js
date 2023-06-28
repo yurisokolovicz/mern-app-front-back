@@ -18,7 +18,7 @@ const UserPlaces = () => {
         const fetchPlaces = async () => {
             try {
                 // GET is the default
-                const responseData = await sendRequest(`http://localhost:5000/api/places/user/${userId}`);
+                const responseData = await sendRequest(`${process.env.REACT_APP_BACKEND_URL}/places/user/${userId}`);
                 setLoadedPlaces(responseData.places);
             } catch (err) {}
         };

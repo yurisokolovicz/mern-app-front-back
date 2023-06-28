@@ -31,7 +31,7 @@ const PlaceItem = placeList => {
     const confirmDeleteHandler = async () => {
         setShowConfirmModal(false); // to close the modal
         try {
-            await sendRequest(`http://localhost:5000/api/places/${placeList.id}`, 'DELETE', null, {
+            await sendRequest(process.env.REACT_APP_BACKEND_URL + `/places'/${placeList.id}`, 'DELETE', null, {
                 Authorization: 'Bearer ' + auth.token
             });
             placeList.onDelete(placeList.id);
@@ -76,7 +76,7 @@ const PlaceItem = placeList => {
                 <Card className="place-item__content">
                     {isLoading && <LoadingSpinner asOverlay />}
                     <div className="place-item__image">
-                        <img src={`http://localhost:5000/${placeList.image}`} alt={placeList.title} />
+                        <img src={`${process.env.REACT_APP_ASSET_URL}/${placeList.image}`} alt={placeList.title} />
                     </div>
                     <div className="place-item__info">
                         <h2>{placeList.title}</h2>

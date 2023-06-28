@@ -68,7 +68,7 @@ const Auth = () => {
         if (isLoginMode) {
             try {
                 const responseData = await sendRequest(
-                    'http://localhost:5000/api/users/login',
+                    process.env.REACT_APP_BACKEND_URL + '/users/login',
                     'POST',
                     JSON.stringify({
                         // body - 3rd argument in the http-hook custom hook
@@ -93,7 +93,7 @@ const Auth = () => {
                 formData.append('password', formState.inputs.password.value);
                 formData.append('image', formState.inputs.image.value);
 
-                const responseData = await sendRequest('http://localhost:5000/api/users/signup', 'POST', formData);
+                const responseData = await sendRequest(process.env.REACT_APP_BACKEND_URL + '/users/signup', 'POST', formData);
                 // Login only if we do not have an error
                 auth.login(responseData.userId, responseData.token);
             } catch (err) {
